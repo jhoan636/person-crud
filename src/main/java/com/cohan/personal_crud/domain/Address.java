@@ -1,9 +1,11 @@
 package com.cohan.personal_crud.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "address")
+@Data
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
