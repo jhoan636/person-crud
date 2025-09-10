@@ -38,8 +38,7 @@ public class PersonRestController {
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<PersonDTO> getPersonById(@PathVariable @Min(value = 1, message = "El ID debe ser mayor a 0") Long id) {
         logger.debug("GET /persons/{}", id);
-        PersonDTO person = personService.getPersonById(id)
-                .orElseThrow(() -> new RuntimeException("Persona no encontrada con ID: " + id));
+        PersonDTO person = personService.getPersonById(id);
         return ResponseEntity.ok(person);
     }
 
