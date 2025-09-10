@@ -37,11 +37,12 @@ public class PersonServiceImpl implements IPersonService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<PersonDTO> getPersonById(Long id) {
+    public PersonDTO getPersonById(Long id) {
         logger.debug("In getPersonById");
-        Optional<Person> person = personRepository.findById(id);
+        Person person = personRepository.findById(id)
+                .orElseThrow(PersonNotFoundException::new);
         logger.debug("Out getPersonById");
-        return person.map(this::convertPersonToPersonDTO);
+        return convertPersonToPersonDTO(person);
     }
 
     @Override
