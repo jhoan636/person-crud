@@ -9,7 +9,7 @@ public interface IPersonService {
 
     List<PersonDTO> getAllPersons();
 
-    Optional<PersonDTO> getPersonById(Long id);
+    PersonDTO getPersonById(Long id);
 
     PersonDTO createPerson(PersonDTO personDTO);
 
