@@ -4,6 +4,8 @@ import com.cohan.personal_crud.domain.Address;
 import com.cohan.personal_crud.domain.Person;
 import com.cohan.personal_crud.dto.AddressDTO;
 import com.cohan.personal_crud.dto.PersonDTO;
+import com.cohan.personal_crud.exception.EmailAlreadyExistsException;
+import com.cohan.personal_crud.exception.PersonNotFoundException;
 import com.cohan.personal_crud.repository.PersonRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class PersonServiceImpl implements IPersonService {
     @Transactional
     public PersonDTO createPerson(PersonDTO personDTO) {
         logger.debug("In createPerson");
+        if (personRepository.existsByEmailIgnoreCase(personDTO.getEmail())) {
+            throw new EmailAlreadyExistsException(personDTO.getEmail());
+        }
         Person person = convertPersonDTOToPerson(personDTO);
         person = personRepository.save(person);
         return convertPersonToPersonDTO(person);
@@ -62,7 +67,9 @@ public class PersonServiceImpl implements IPersonService {
         updatedPerson.setFirstName(personDTO.getFirstName());
         updatedPerson.setLastName(personDTO.getLastName());
         updatedPerson.setEmail(personDTO.getEmail());
-        updatedPerson.setAddress(convertAddressDTOToAddress(personDTO.getAddress()));
+        if (personDTO.getAddress() != null) {
+            updatedPerson.setAddress(convertAddressDTOToAddress(personDTO.getAddress()));
+        }
         updatedPerson = personRepository.save(updatedPerson);
         logger.debug("Out updatePerson");
         return convertPersonToPersonDTO(updatedPerson);
@@ -73,7 +80,7 @@ public class PersonServiceImpl implements IPersonService {
         logger.debug("In deletePerson");
         Optional<Person> person = personRepository.findById(id);
         if (!person.isPresent()) {
-            throw new RuntimeException("Person with id " + id + " not found");
+            throw new PersonNotFoundException();
         }
         // Depende de la logica de negocio si un borrado logico o fisico
         personRepository.deleteById(id);
