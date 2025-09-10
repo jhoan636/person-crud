@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +25,7 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)// No modificara
     public List<PersonDTO> getAllPersons() {
         logger.debug("In getAllPersons");
         List<Person> persons = personRepository.findAll();
@@ -44,7 +43,7 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public PersonDTO createPerson(PersonDTO personDTO) {
         logger.debug("In createPerson");
         Person person = convertPersonDTOToPerson(personDTO);
@@ -84,19 +83,12 @@ public class PersonServiceImpl implements IPersonService {
     @Override
     public List<PersonDTO> searchPersonsByName(String searchTerm) {
         logger.debug("In searchPersonsByName");
+        List<Person> persons = personRepository
+                .findByFirstNameContainingIgnoreCase(searchTerm);
         logger.debug("Out searchPersonsByName");
-        return List.of();
+        return persons.stream().map(this::convertPersonToPersonDTO).toList();
     }
 
-    @Override
-    public List<PersonDTO> findByBirthDateRange(LocalDate startDate, LocalDate endDate) {
-        return List.of();
-    }
-
-    @Override
-    public boolean existsById(Long id) {
-        return false;
-    }
 
     private PersonDTO convertPersonToPersonDTO(Person person) {
         PersonDTO dto = new PersonDTO();
@@ -104,7 +96,9 @@ public class PersonServiceImpl implements IPersonService {
         dto.setFirstName(person.getFirstName());
         dto.setLastName(person.getLastName());
         dto.setEmail(person.getEmail());
-        dto.setAddress(convertAddressToAddressDTO(person.getAddress()));
+        if (person.getAddress() != null) {
+            dto.setAddress(convertAddressToAddressDTO(person.getAddress()));
+        }
         return dto;
     }
 
@@ -123,7 +117,9 @@ public class PersonServiceImpl implements IPersonService {
         person.setFirstName(personDTO.getFirstName());
         person.setLastName(personDTO.getLastName());
         person.setEmail(personDTO.getEmail());
-        person.setAddress(convertAddressDTOToAddress(personDTO.getAddress()));
+        if (personDTO.getAddress() != null) {
+            person.setAddress(convertAddressDTOToAddress(personDTO.getAddress()));
+        }
         return person;
     }
 
