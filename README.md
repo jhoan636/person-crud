@@ -9,7 +9,7 @@ RESTful para crear, leer, actualizar y eliminar registros de personas.
 - **SpringBoot**
 - **Postgresql**
 - **Maven**
-- **PA/Hibernate**
+- **JPA/Hibernate**
 - **Spring Data JPA**
 - **Spring Web**
 - **validation**
