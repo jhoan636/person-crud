@@ -11,4 +11,6 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 
     List<Person> findByFirstNameContainingIgnoreCase(String firstName);
 
+    boolean existsByEmailIgnoreCase(String email);
+
 }
