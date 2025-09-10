@@ -62,14 +62,12 @@ public class PersonServiceTest {
     void testGetPersonByIdFound() {
         when(personRepository.findById(1L)).thenReturn(Optional.of(person));
 
-        Optional<PersonDTO> result = personService.getPersonById(1L);
+        PersonDTO result = personService.getPersonById(1L);
 
-        assertTrue(result.isPresent(), "Se esperaba un resultado no vacío");
-
-        PersonDTO dto = result.get();
-        assertEquals(person.getEmail(), dto.getEmail());
-        assertEquals(person.getFirstName(), dto.getFirstName());
-        assertEquals(person.getLastName(), dto.getLastName());
+        assertNotNull(result, "Se esperaba un resultado no nulo");
+        assertEquals(person.getEmail(), result.getEmail());
+        assertEquals(person.getFirstName(), result.getFirstName());
+        assertEquals(person.getLastName(), result.getLastName());
 
         verify(personRepository, times(1)).findById(1L);
     }
@@ -78,8 +76,11 @@ public class PersonServiceTest {
     void testGetPersonByIdNotFound() {
         when(personRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Optional<PersonDTO> result = personService.getPersonById(1L);
-        assertTrue(result.isEmpty()); // o assertFalse(result.isPresent());
+        assertThrows(
+                com.cohan.personal_crud.exception.PersonNotFoundException.class,
+                () -> personService.getPersonById(1L),
+                "Se esperaba PersonNotFoundException"
+        );
         verify(personRepository, times(1)).findById(1L);
     }
 
