@@ -31,7 +31,8 @@ public class Person {
     @Column(name = "email", nullable = false, unique = true, length = 160)
     private String email;
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL) // optional = true → 0..1
+    @OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+// optional = true → 0..1
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
